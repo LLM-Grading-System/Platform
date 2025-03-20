@@ -1,5 +1,58 @@
 # LLM Grading
 
+## Архитектура
+
+```mermaid
+graph LR
+    %% C4 style classes c4model.com %%
+    classDef person fill:#08427b,stroke:black,color:white;
+    classDef container fill:#1168bd,stroke:black,color:white;
+    classDef database fill:#1168bd,stroke:black,color:white;
+    classDef software fill:#1168bd,stroke:black,color:white;
+    classDef existing fill:#999999,stroke:black,color:white;
+    classDef boundary fill:white,stroke:black,stroke-width:2px,stroke-dasharray: 5 5;
+    classDef frame fill:white,stroke:black;
+
+
+    %% nodes %%
+    GitHub["GitHub API"]:::existing
+    Mistral["Mistral AI API"]:::existing
+    Admin((Admin)):::person
+    Student((Student)):::person
+    WebApp("Admin Panel Application <br>[Container: React]"):::container
+    WebServer("Web Server <br>[Container: nginx]"):::container
+    CoreAPI("Core API <br>[Container: FastAPI]"):::container
+    Worker("LLM Grader <br>[Container: FastStream]"):::container
+    CoreDB[("Core Data <br>[Container: PostgreSQL]")]:::database
+    S3[("Submissions <br>[Container: Minio]")]:::database
+    EventsQueue(["Events Queue <br>[Container: Kafka]"]):::container
+    TGBot("Telegram Bot <br>[Container: Aiogram]"):::container
+
+    %% connections and boundaries %%
+    
+    subgraph Legend [Containers]
+        Student-.->|Uses| TGBot
+        Admin-.->|Uses| WebApp
+        
+        
+        subgraph Boundary["Boundary: System"]
+            WebApp-.->|"Proxies requests <br> [HTTP/HTTPS]"| WebServer
+            WebServer-.->|"Proxies requests <br> [HTTP/HTTPS]"| CoreAPI
+            TGBot-.->|"Makes requests <br> [HTTP/HTTPS]"| CoreAPI
+            CoreAPI-.->|"Makes requests <br> [HTTP/HTTPS]"| S3
+            CoreAPI-.->|"Makes requests  <br> [TCP]"| CoreDB
+            CoreAPI-.->|"Push events <br> [TCP]"| EventsQueue
+            Worker-.->|"Makes requestts <br> [HTTP/HTTPS]"| CoreAPI
+            Worker-.->|"Pull events <br> [TCP]"| EventsQueue
+            TGBot-.->|"Pull events <br> [TCP]"| EventsQueue
+        end
+        class Boundary boundary
+        GitHub
+        Mistral
+    end
+    class Legend frame
+```
+
 ## Запуск
 
 ### Переменные окружения
