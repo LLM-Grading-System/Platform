@@ -129,6 +129,19 @@ services:
       - kafka
       - minio
 
+  bot:
+    image: daniilsolo/llm-grading.student-bot:latest
+    container_name: grading_student_bot
+    env_file: ".env"
+    restart: always
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+      - API_HOST=api
+      - API_SCHEMA=http
+      - API_PORT=8000
+      - BOT_TOKEN=$BOT_TOKEN
+      - GITHUB_ACCESS_TOKEN=$GITHUB_ACCESS_TOKEN
+
 volumes:
   grading_postgres_data:
   grading_minio_data:

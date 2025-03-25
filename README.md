@@ -77,6 +77,10 @@ KAFKA_UI_ADMIN_PASSWORD=password
 # Mistral API
 MISTRAL_API_KEY=<SET-LATER>
 MISTRAL_MODEL=codestral-latest
+# Telegram
+BOT_TOKEN=<SET-LATER>
+# GitHub
+GITHUB_ACCESS_TOKEN=<SET-LATER>
 ```
 
 ### Инструкция по изначальному запуску
@@ -88,4 +92,4 @@ MISTRAL_MODEL=codestral-latest
 5. Запустить контейнеры для Kafka `docker-compose up -d zookeeper kafka kafka-ui`
 6. Зайти в админку Kafka UI по http://localhost:8090/auth под кредами KAFKA_UI_ADMIN_LOGIN/KAFKA_UI_ADMIN_PASSWORD
 7. Перейти по http://localhost:8090/ и убедиться, что кластер живой
-8. Запустить остальные контейнеры `docker-compose up -d postgres api grader`
+8. Запустить остальные контейнеры `docker-compose up -d postgres api grader bot`
