@@ -81,6 +81,10 @@ MISTRAL_MODEL=codestral-latest
 BOT_TOKEN=<SET-LATER>
 # GitHub
 GITHUB_ACCESS_TOKEN=<SET-LATER>
+# GitHub
+GITHUB_APPS_PRIVATE_KEY_PATH=/app/grading.private-key.pem
+GITHUB_APPS_CLIENT_ID=<SET-LATER>
+GITHUB_PERSONAL_ACCESS_TOKEN=<SET-LATER>
 ```
 
 ### Инструкция по изначальному запуску
@@ -92,4 +96,15 @@ GITHUB_ACCESS_TOKEN=<SET-LATER>
 5. Запустить контейнеры для Kafka `docker-compose up -d zookeeper kafka kafka-ui`
 6. Зайти в админку Kafka UI по http://localhost:8090/auth под кредами KAFKA_UI_ADMIN_LOGIN/KAFKA_UI_ADMIN_PASSWORD
 7. Перейти по http://localhost:8090/ и убедиться, что кластер живой
-8. Запустить остальные контейнеры `docker-compose up -d postgres api grader bot`
+8. Запустить базу данных и подождать несколько секунд `docker-compose up -d postgres`
+9. Запустить все остальное `docker-compose up -d api grader bot github-gateway`
+
+### Инструкции по обновлению Docker-образов в продакшн-среде
+
+```bash
+docker pull daniilsolo/llm-grading.core-api:latest 
+docker pull daniilsolo/llm-grading.grader:latest 
+docker pull daniilsolo/llm-grading.student-bot:latest 
+docker pull daniilsolo/llm-grading.github-gateway:latest
+docker-compose up -d api grader bot github-gateway
+```

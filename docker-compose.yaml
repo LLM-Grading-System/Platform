@@ -142,6 +142,21 @@ services:
       - BOT_TOKEN=$BOT_TOKEN
       - GITHUB_ACCESS_TOKEN=$GITHUB_ACCESS_TOKEN
 
+  github-gateway:
+    image: daniilsolo/llm-grading.github-gateway:latest
+    container_name: grading_github_gateway
+    env_file: ".env"
+    restart: always
+    ports:
+      - 8001:8000
+    volumes:
+      - ./grading.private-key.pem:/app/grading.private-key.pem
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+      - GITHUB_APPS_PRIVATE_KEY_PATH=$GITHUB_APPS_PRIVATE_KEY_PATH
+      - GITHUB_APPS_CLIENT_ID=$GITHUB_APPS_CLIENT_ID
+      - GITHUB_PERSONAL_ACCESS_TOKEN=$GITHUB_PERSONAL_ACCESS_TOKEN
+
 volumes:
   grading_postgres_data:
   grading_minio_data:
