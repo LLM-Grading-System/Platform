@@ -97,7 +97,7 @@ GITHUB_PERSONAL_ACCESS_TOKEN=<SET-LATER>
 6. Зайти в админку Kafka UI по http://localhost:8090/auth под кредами KAFKA_UI_ADMIN_LOGIN/KAFKA_UI_ADMIN_PASSWORD
 7. Перейти по http://localhost:8090/ и убедиться, что кластер живой
 8. Запустить базу данных и подождать несколько секунд `docker-compose up -d postgres`
-9. Запустить все остальное `docker-compose up -d api grader bot github-gateway`
+9. Запустить все остальное `docker-compose up -d api grader bot github-gateway web`
 
 ### Инструкции по обновлению Docker-образов в продакшн-среде
 
@@ -106,5 +106,6 @@ docker pull daniilsolo/llm-grading.core-api:latest
 docker pull daniilsolo/llm-grading.grader:latest 
 docker pull daniilsolo/llm-grading.student-bot:latest 
 docker pull daniilsolo/llm-grading.github-gateway:latest
+docker pull daniilsolo/llm-grading.frontend:latest
 docker-compose up -d api grader bot github-gateway
 ```

@@ -82,6 +82,18 @@ services:
       - kafka
       - zookeeper
 
+  web:
+    image: daniilsolo/llm-grading.frontend
+    container_name: grading_web
+    ports:
+      - 80:80
+    restart: always
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/site.conf:/etc/nginx/conf.d/site.conf
+    depends_on:
+      - api
+
   api:
     image: daniilsolo/llm-grading.core-api:latest
     container_name: grading_api
