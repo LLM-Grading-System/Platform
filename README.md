@@ -19,14 +19,14 @@ graph LR
     Mistral["Mistral AI API"]:::existing
     Admin((Admin)):::person
     Student((Student)):::person
-    WebApp("Admin Panel Application <br>[Container: React]"):::container
-    WebServer("Web Server <br>[Container: nginx]"):::container
+    WebApp("Admin Panel <br>[Container: Nginx + React]"):::container
     CoreAPI("Core API <br>[Container: FastAPI]"):::container
     Worker("LLM Grader <br>[Container: FastStream]"):::container
+    GitHubGateway("GitHub Gateway <br>[Container: FastAPI]"):::container
     CoreDB[("Core Data <br>[Container: PostgreSQL]")]:::database
     S3[("Submissions <br>[Container: Minio]")]:::database
-    EventsQueue(["Events Queue <br>[Container: Kafka]"]):::container
-    TGBot("Telegram Bot <br>[Container: Aiogram]"):::container
+    Events(["Events <br>[Container: Kafka Topic]"]):::container
+    TGBot("Student Bot <br>[Container: Aiogram]"):::container
 
     %% connections and boundaries %%
     
@@ -34,21 +34,29 @@ graph LR
         Student-.->|Uses| TGBot
         Admin-.->|Uses| WebApp
         
-        
         subgraph Boundary["Boundary: System"]
-            WebApp-.->|"Proxies requests <br> [HTTP/HTTPS]"| WebServer
-            WebServer-.->|"Proxies requests <br> [HTTP/HTTPS]"| CoreAPI
-            TGBot-.->|"Makes requests <br> [HTTP/HTTPS]"| CoreAPI
-            CoreAPI-.->|"Makes requests <br> [HTTP/HTTPS]"| S3
+            WebApp-.->|"Makes requests <br> [HTTP/HTTPS]"| CoreAPI
+            CoreAPI-.->|"Makes requests  <br> [HTTP/HTTPS]"| GitHubGateway
             CoreAPI-.->|"Makes requests  <br> [TCP]"| CoreDB
-            CoreAPI-.->|"Push events <br> [TCP]"| EventsQueue
+            CoreAPI-.->|"Makes requests <br> [HTTP/HTTPS]"| S3
+
             Worker-.->|"Makes requestts <br> [HTTP/HTTPS]"| CoreAPI
-            Worker-.->|"Pull events <br> [TCP]"| EventsQueue
-            TGBot-.->|"Pull events <br> [TCP]"| EventsQueue
+            Worker-.->|"Makes requests <br> [HTTP/HTTPS]"| S3
+
+            CoreAPI-.->|"Pushes event  <br> [TCP]"| Events
+            TGBot-.->|"Pulls event <br> [TCP]"| Events
+            Worker-.->|"Pulls event <br> [TCP]"| Events
+            GitHubGateway-.->|"Pushes/pulls event <br> [TCP]"| Events
+
+            
+            TGBot-.->|"Makes requests <br> [HTTP/HTTPS]"| GitHubGateway
+            TGBot-.->|"Makes requests <br> [HTTP/HTTPS]"| CoreAPI
+
         end
         class Boundary boundary
-        GitHub
-        Mistral
+        
+        GitHubGateway-.->|"Makes requests <br> [HTTP/HTTPS]"| GitHub
+        Worker-.->|"Makes requests <br> [HTTP/HTTPS]"| Mistral
     end
     class Legend frame
 ```
